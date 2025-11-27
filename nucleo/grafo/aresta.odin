@@ -1,5 +1,27 @@
 package grafo
 
 Aresta :: struct {
+    valor:int,
     no1,no2: ^No
+}
+
+create_aresta::proc(no1,no2:^No,valor:int) -> ^Aresta {
+    nova_aresta := new(Aresta)
+    nova_aresta.no1 = no1
+    nova_aresta.no2 = no2
+    nova_aresta.valor = valor
+
+    append(&no1.arestas,nova_aresta) //como eu criei uma nova aresta, devo adicionar elas aos nos obviamente
+    append(&no2.arestas,nova_aresta)
+
+    return nova_aresta
+}
+
+destroy_aresta::proc(aresta:^^Aresta) {
+    if aresta == nil {return}
+    if  aresta^ == nil {return}
+
+    free(aresta^)
+
+    aresta^ = nil
 }

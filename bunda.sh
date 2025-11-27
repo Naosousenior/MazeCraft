@@ -1,0 +1,1 @@
+odin run . -debug -collection:ferramentas="ferramentas/" -collection:nucleo="nucleo/"
