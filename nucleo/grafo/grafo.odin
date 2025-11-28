@@ -2,6 +2,14 @@ package grafo
 
 import ferr "ferramentas:matrizes"
 
+/*
+ Grafo que representa o labirinto a ser solucionado
+ O campo inicio representa o ponto de partida dentro do labirinto,
+ e o campo fim representa o ponto de chegada do labirinto.
+ O campo nos é a lista de nós do grafo, excluindo os nós de início e de fim.
+ O campo aresta é a lista de arestas existentes no grafo.
+ Pode ser um pouco redundante, mas informação nunca é demais
+ */
 Grafo :: struct {
     inicio,fim: ^No, //importante explicar que os nós de início e de fim não estão inclusos na lista de nós
     nos: [dynamic]^No,

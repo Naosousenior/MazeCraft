@@ -1,5 +1,9 @@
 package grafo
 
+/*
+ A estrutura base do grafo. Pode ser identificada por seu valor
+ O campo arestas lista as aresta que incidem no nó.
+ */
 No :: struct {
     valor :int,
     arestas: [dynamic]^Aresta

@@ -1,5 +1,9 @@
 package grafo
 
+/*
+ Uma estrutura que representa a ligação entre dois nós, respectivamente no campos no1 e no2
+ A aresta pode ser identificada pelo seu campo valor
+ */
 Aresta :: struct {
     valor:int,
     no1,no2: ^No
