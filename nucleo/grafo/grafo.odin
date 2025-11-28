@@ -8,6 +8,43 @@ Grafo :: struct {
     arestas: [dynamic]^Aresta
 }
 
+
+/*
+ Retorna o nó do grafo especificado que possui o valor especificado.
+ Caso o nó não seja encontrado, retorna nil.
+ */
+pegar_no::proc(grafo:^Grafo, valor:int) -> ^No {
+    if grafo.inicio.valor == valor {
+        return grafo.inicio
+    }
+
+    if grafo.fim.valor == valor {
+        return grafo.fim
+    }
+
+    for no in grafo.nos {
+        if no.valor == valor {
+            return no
+        }
+    }
+
+    return nil
+}
+
+/*
+ Retorna a aresta do grafo especificado que possui o valor especificado.
+ Caso a aresta não seja encontrada, retorna nil.
+ */
+pegar_aresta::proc(grafo:^Grafo, valor:int) -> ^Aresta {
+    for aresta in grafo.arestas {
+        if aresta.valor == valor {
+            return aresta
+        }
+    }
+
+    return nil
+}
+
 /*
   Cria uma matriz de adjacencia para o grafo passado como parametro.
   Retorna a matriz de adjancencia, onde as linhas e as colunas são os valores dos nós do grafo
