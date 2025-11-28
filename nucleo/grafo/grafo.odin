@@ -23,21 +23,9 @@ criar_matriz_adjacencia::proc(grafo: ^Grafo) -> [][]i8 {
         }
     }
 
-    for aresta in grafo.inicio.arestas {
-        matriz_adjacencia[aresta.no1.valor][aresta.no2.valor] = 1 //para cada aresta, eu modifico o valor da posição correspondente na matriz para false
+    for aresta in grafo.arestas {
+        matriz_adjacencia[aresta.no1.valor][aresta.no2.valor] = 1
         matriz_adjacencia[aresta.no2.valor][aresta.no1.valor] = 1
-    }
-
-    for aresta in grafo.fim.arestas {
-         matriz_adjacencia[aresta.no1.valor][aresta.no2.valor] = 1
-         matriz_adjacencia[aresta.no2.valor][aresta.no1.valor] = 1
-    }
-
-    for no in grafo.nos {
-        for aresta in no.arestas {
-            matriz_adjacencia[aresta.no1.valor][aresta.no2.valor] = 1
-            matriz_adjacencia[aresta.no2.valor][aresta.no1.valor] = 1
-        }
     }
     
     return matriz_adjacencia
