@@ -29,3 +29,20 @@ destroy_aresta::proc(aresta:^^Aresta) {
 
     aresta^ = nil
 }
+
+/*
+ Recebe como argumento uma aresta e um nó.
+ Verifica qual das pontas da aresta corresponde ao Nó, e retorna o nó na outra ponta
+ Caso a aresta não incida no nó passado como argumento, a função retorna -1
+ */
+no_na_outra_ponta::proc(aresta: ^Aresta, no: ^No) -> int {
+    if no.valor == aresta.no1.valor {
+        return aresta.no2.valor
+    }
+
+    if no.valor == aresta.no2.valor {
+        return aresta.no1.valor
+    }
+
+    return -1
+}
