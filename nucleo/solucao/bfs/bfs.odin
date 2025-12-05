@@ -8,4 +8,8 @@ import solucao "nucleo:solucao"
  lista de tentativas realizadas para solucionar o grafo do labirinto,
  e em segundo lugar a solução encontrada pelo método no labirinto
  */
-bfs::proc(grafo: ^gf.Grafo) -> ([dynamic]solucao.PilhaPassos, solucao.PilhaPassos)
+bfs::proc(grafo: ^gf.Grafo) -> ([dynamic]solucao.PilhaPassos, solucao.PilhaPassos){
+   
+}
+
+listar_filhos::proc(no: ^gf.No) ->([dynamic]gf.No)
