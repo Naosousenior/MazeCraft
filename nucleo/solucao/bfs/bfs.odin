@@ -25,6 +25,7 @@ bfs :: proc(grafo: ^gf.Grafo) -> [dynamic]^gf.No {
 
 		enqueue_irmoes(&q, irmoes)
 
+		actual_no = queue.pop_front(&q)
 		_, ok := visited[actual_no]
 
 		for ok {
