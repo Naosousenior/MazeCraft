@@ -8,71 +8,71 @@ import gf "nucleo:grafo"
  para encontrar algum outro nó (não necessariamente a solução)
  */
 PilhaPassos :: struct {
-    atual : ^Passo
+	atual: ^Passo,
 }
 
 Passo :: struct {
-    proximo : ^Passo,
-    aresta : ^gf.Aresta
+	proximo: ^Passo,
+	aresta:  ^gf.Aresta,
 }
 
 
 //Isso aqui é uma pilha comum, então tem uma função push, onde você coloca uma aresta
-push::proc(pilha:^PilhaPassos,aresta:^gf.Aresta) {
-    novo_passo := create_passo(pilha.atual,aresta)
-    pilha.atual = novo_passo
+push :: proc(pilha: ^PilhaPassos, aresta: ^gf.Aresta) {
+	novo_passo := create_passo(pilha.atual, aresta)
+	pilha.atual = novo_passo
 }
 
 //Pop normal de qualquer pilha. Se a pilha estiver vazia, retorna nil
-pop::proc(pilha:^PilhaPassos) -> ^gf.Aresta {
-    atual := pilha.atual
+pop :: proc(pilha: ^PilhaPassos) -> ^gf.Aresta {
+	atual := pilha.atual
 
-    if atual == nil {return nil}
+	if atual == nil {return nil}
 
-    aresta := atual.aresta
-    pilha.atual = atual.proximo
+	aresta := atual.aresta
+	pilha.atual = atual.proximo
 
-    destroy_passo(&atual)
+	destroy_passo(&atual)
 
-    return aresta
+	return aresta
 }
 
 //limpa a pilha
-clean::proc(pilha:^PilhaPassos) {
-    for {
-        if pop(pilha) == nil {return}
-    }
+clean :: proc(pilha: ^PilhaPassos) {
+	for {
+		if pop(pilha) == nil {return}
+	}
 }
 
-create_passo::proc(proximo:^Passo, aresta:^gf.Aresta) -> ^Passo {
-    novo_passo := new(Passo)
-    novo_passo.proximo = proximo
-    novo_passo.aresta = aresta
+create_passo :: proc(proximo: ^Passo, aresta: ^gf.Aresta) -> ^Passo {
+	novo_passo := new(Passo)
+	novo_passo.proximo = proximo
+	novo_passo.aresta = aresta
 
-    return novo_passo
+	return novo_passo
 }
 
-destroy_passo::proc(ptr_passo:^^Passo) {
-    if ptr_passo == nil {return}
-    if ptr_passo^ == nil {return}
+destroy_passo :: proc(ptr_passo: ^^Passo) {
+	if ptr_passo == nil {return}
+	if ptr_passo^ == nil {return}
 
-    free(ptr_passo^)
-    ptr_passo^ = nil
+	free(ptr_passo^)
+	ptr_passo^ = nil
 }
 
-create_passos::proc(passo_inicial :^Passo= nil) -> ^PilhaPassos {
-    nova_pilha := new(PilhaPassos)
-    nova_pilha.atual = passo_inicial
+create_passos :: proc(passo_inicial: ^Passo = nil) -> ^PilhaPassos {
+	nova_pilha := new(PilhaPassos)
+	nova_pilha.atual = passo_inicial
 
-    return nova_pilha
+	return nova_pilha
 }
 
-destroy_pilha::proc(ptr_pilha:^^PilhaPassos) {
-    if ptr_pilha == nil {return}
-    if ptr_pilha^ == nil {return}
+destroy_pilha :: proc(ptr_pilha: ^^PilhaPassos) {
+	if ptr_pilha == nil {return}
+	if ptr_pilha^ == nil {return}
 
-    clean(ptr_pilha^)
+	clean(ptr_pilha^)
 
-    free(ptr_pilha^)
-    ptr_pilha^ = nil
+	free(ptr_pilha^)
+	ptr_pilha^ = nil
 }
