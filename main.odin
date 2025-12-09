@@ -1,10 +1,11 @@
 package main
 
-import "core:strings"
+
 import "core:fmt"
 import "core:mem"
 
-import lb "interface:labirinto"
+import gf "nucleo:grafo"
+import lb "nucleo:labirinto"
 import ferr "ferramentas:es"
 
 main::proc() {
@@ -30,10 +31,24 @@ main::proc() {
 		fmt.println("da não fi, não achei o labirinto")
 	}
 
-	fmt.println(texto)
 	labirinto := lb.create_labirinto(texto)
-
 	lb.imprimir_labirinto(labirinto)
+
+	nos,no_inicio,no_fim,relacao := lb.pegar_pontos(labirinto)
+
+	fmt.println("Nós encontrados:")
+	lb.imprimir_labirinto(labirinto)
+
+	delete(relacao)
+	for &n in nos {
+		gf.destroy_no(&n)
+	}
+
+	delete(nos)
+
+	gf.destroy_no(&no_inicio)
+	gf.destroy_no(&no_fim)
+	
 
 	lb.destroy_labirinto(&labirinto)
 }
