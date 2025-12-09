@@ -18,35 +18,40 @@ bfs :: proc(grafo: ^gf.Grafo) -> [dynamic]^gf.No {
 	passos: [dynamic]^gf.No
 	actual_no := grafo.inicio
 
+	defer {queue.destroy(&q)
+		delete(visited)
+	}
+
 	for actual_no != grafo.fim {
+
 		append(&passos, actual_no)
 		visited[actual_no] = true
-		irmoes, _ := listar_irmoes(actual_no)
+		irmoes := listar_irmoes(actual_no)
+
+		defer delete(irmoes)
 
 		enqueue_irmoes(&q, irmoes)
 
 		actual_no = queue.pop_front(&q)
-		_, ok := visited[actual_no]
 
-		if ok {
+		for visited[actual_no] {
 			actual_no = queue.pop_front(&q)
 		}
 	}
 
+	append(&passos, actual_no)
 	return passos
 }
 
-listar_irmoes :: proc(no: ^gf.No) -> ([dynamic]^gf.No, [dynamic]^gf.Aresta) {
+listar_irmoes :: proc(no: ^gf.No) -> [dynamic]^gf.No {
 
 	irmoes: [dynamic]^gf.No
-	arestas: [dynamic]^gf.Aresta
 
 	for aresta in no.arestas {
-		append(&arestas, aresta)
 		append(&irmoes, gf.no_na_outra_ponta(aresta, no))
 	}
 
-	return irmoes, arestas
+	return irmoes
 }
 
 enqueue_irmoes :: proc(q: ^queue.Queue(^gf.No), irmoes: [dynamic]^gf.No) {
