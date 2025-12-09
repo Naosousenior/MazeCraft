@@ -1,8 +1,11 @@
 package main
 
+import "core:strings"
 import "core:fmt"
 import "core:mem"
-import gf "nucleo:grafo"
+
+import lb "interface:labirinto"
+import ferr "ferramentas:es"
 
 main::proc() {
     when ODIN_DEBUG {
@@ -21,49 +24,16 @@ main::proc() {
 		}
 	}
 
-    no_inicio := gf.create_no(0)
-    no_fim := gf.create_no(4)
+	texto,ok := ferr.ler_arquivo("testes/labirinto_simples.txt")
+	defer delete(texto)
+	if !ok {
+		fmt.println("da não fi, não achei o labirinto")
+	}
 
-    nos := make([dynamic]^gf.No,3)
-    nos[0] = gf.create_no(1)
-    nos[1] = gf.create_no(2)
-    nos[2] = gf.create_no(3)
+	fmt.println(texto)
+	labirinto := lb.create_labirinto(texto)
 
-    arestas := make([dynamic]^gf.Aresta,0)
+	lb.imprimir_labirinto(labirinto)
 
-    append(&arestas,gf.create_aresta(no_inicio,nos[2],0))
-    append(&arestas,gf.create_aresta(no_inicio,no_fim,1))
-    append(&arestas,gf.create_aresta(nos[0],nos[2],2))
-    append(&arestas,gf.create_aresta(nos[0],no_fim,3))
-    append(&arestas,gf.create_aresta(nos[1],no_fim,4))
-    append(&arestas,gf.create_aresta(nos[0],nos[1],5))
-
-    grafo := gf.create_grafo(no_inicio,no_fim,nos,arestas)
-
-    matriz_adjacencia := gf.criar_matriz_adjacencia(grafo)
-    matriz_incidencia := gf.criar_matriz_incidencia(grafo)
-
-    fmt.println("Matriz adjacencia:")
-    for m in matriz_adjacencia {
-        fmt.print(m)
-        fmt.println("")
-    }
-
-    fmt.println("Matriz incidencia:")
-    for m in matriz_incidencia {
-        fmt.print(m)
-        fmt.println("")
-    }
-
-    gf.destroy_grafo(&grafo)
-    for i in matriz_adjacencia {
-        delete(i)
-    }
-
-    for i in matriz_incidencia {
-        delete(i)
-    }
-
-    delete(matriz_adjacencia)
-    delete(matriz_incidencia)
+	lb.destroy_labirinto(&labirinto)
 }
