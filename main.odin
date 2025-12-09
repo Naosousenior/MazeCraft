@@ -5,7 +5,8 @@ import "core:mem"
 import tools "ferramentas:montando_grafos"
 import gf "nucleo:grafo"
 import sl "nucleo:solucao/bfs"
-
+import "nucleo:solucao"
+import "nucleo:solucao/dfs"
 
 main :: proc() {
 	when ODIN_DEBUG {
@@ -32,7 +33,7 @@ main :: proc() {
 	for s in solucao {
 		fmt.println(s.valor)
 	}
-  
+
   delete(solucao)
 	gf.destroy_grafo(&grafo)
 }
