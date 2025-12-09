@@ -28,35 +28,10 @@ bfs :: proc(grafo: ^gf.Grafo) -> [dynamic]^gf.No {
 		actual_no = queue.pop_front(&q)
 		_, ok := visited[actual_no]
 
-		for ok {
+		if ok {
 			actual_no = queue.pop_front(&q)
 		}
 	}
-	// q: queue.Queue(^gf.No)
-	// queue.init(&q)
-	// visited := make(map[^gf.No]bool)
-	// passos: [dynamic]gf.Aresta
-	// actual_no := grafo.inicio
-	//
-	// for actual_no != grafo.fim {
-	//
-	// 	visited[actual_no] = true
-	// 	irmoes, step := listar_irmoes(actual_no)
-	//
-	// 	for aresta, index in step {
-	// 		append(&passos, aresta)
-	// 	}
-	//
-	// 	enqueue_irmoes(&q, irmoes)
-	// 	actual_no = queue.pop_front(&q)
-	//
-	// 	_, ok := visited[actual_no]
-	//
-	// 	if ok {
-	// 		actual_no = queue.pop_front(&q)
-	// 	}
-	//
-	// }
 
 	return passos
 }
