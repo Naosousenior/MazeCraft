@@ -4,12 +4,12 @@ import "core:fmt"
 import "core:mem"
 import tools "ferramentas:montando_grafos"
 import gf "nucleo:grafo"
-import sl "nucleo:solucao/bfs"
-import "nucleo:solucao"
+import "nucleo:solucao/bfs"
 import "nucleo:solucao/dfs"
 
+
 main :: proc() {
-	when ODIN_DEBUG {
+    when ODIN_DEBUG {
 		track: mem.Tracking_Allocator
 		mem.tracking_allocator_init(&track, context.allocator)
 		context.allocator = mem.tracking_allocator(&track)
@@ -27,13 +27,23 @@ main :: proc() {
 
 	grafo := tools.montar_grafo_simples()
 
-	solucao := sl.bfs(grafo)
+	using bfs
+    using dfs
 
-	fmt.println("Segundo o emanuel, a solução para este labirinto é:")
-	for s in solucao {
-		fmt.println(s.valor)
-	}
+	solucao := bfs(grafo)
+	solucao_dfs := dfs(grafo)
 
-  delete(solucao)
+   	fmt.println("Segundo o emanuel, a solução para este labirinto é:")
+   	for s in solucao {
+  		fmt.println(s.valor)
+   	}
+
+   	fmt.println("Segundo o Lucas, a solução para este labirinto é:")
+   	for s in solucao_dfs {
+  		fmt.println(s.valor)
+   	}
+
+    delete(solucao_dfs)
+    delete(solucao)
 	gf.destroy_grafo(&grafo)
 }
