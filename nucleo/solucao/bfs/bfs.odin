@@ -53,7 +53,7 @@ bfs :: proc(grafo: ^gf.Grafo) -> ^solucao.PilhaPassos {
 listar_irmoes :: proc(no: ^gf.No) -> ([dynamic]^gf.No, [dynamic]^gf.Aresta) {
 
 	irmoes: [dynamic]^gf.No
-	arestas: [dynamic]^gf.Aresta
+	arestas: [dynamic]^gf.Aresta 
 
 	for aresta in no.arestas {
 		append(&arestas, aresta)
