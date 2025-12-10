@@ -32,9 +32,11 @@ main::proc() {
 	}
 
 	labirinto := lb.create_labirinto(texto)
-	lb.imprimir_labirinto(labirinto)
+	lb.imprimir_labirinto(labirinto)	
 
 	nos,no_inicio,no_fim,relacao_nos := lb.pegar_pontos(labirinto)
+	fmt.println("\nNós encontrados:")
+	lb.imprimir_labirinto(labirinto)
 
 	nos2 := make([dynamic]^gf.No)
 	for n in nos {
@@ -45,11 +47,10 @@ main::proc() {
 	append(&nos2,no_fim)
 
 	arestas, relacao_arestas := lb.pegar_arestas(labirinto,nos2,relacao_nos)
-
-	fmt.println("Nós encontrados:")
+	fmt.println("\nArestas encontrados:")
 	lb.imprimir_labirinto(labirinto)
 
-	delete(relacao_nos)
+	
 	for &n in nos {
 		gf.destroy_no(&n)
 	}
@@ -58,7 +59,11 @@ main::proc() {
 		gf.destroy_aresta(&a)
 	}
 
-	delete(nos)
+	for _,r in relacao_arestas {
+		delete(r)
+	}
+
+	delete(relacao_nos)
 	delete(relacao_arestas)
 	delete(nos)
 	delete(nos2)

@@ -1,1 +1,1 @@
-odin run . -debug -collection:ferramentas="ferramentas/" -collection:nucleo="nucleo/" -collection:interface="interface/"
+odin run . -debug -sanitize:address -collection:ferramentas="ferramentas/" -collection:nucleo="nucleo/" -collection:interface="interface/"
