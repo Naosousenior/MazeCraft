@@ -1,5 +1,6 @@
 package labirinto
 import "core:fmt"
+import "nucleo:labirinto"
 
 ComponenteLabirinto :: enum {
     inicio,
@@ -7,6 +8,10 @@ ComponenteLabirinto :: enum {
     caminho_visitado,
     parede,
     fim
+}
+
+Coordenada :: struct {
+    i,j: int
 }
 
 Labirinto :: struct {
@@ -43,12 +48,45 @@ imprimir_labirinto::proc(l: ^Labirinto) {
     }
 }
 
-visitar_celula::proc(l: ^Labirinto, i,j: int) {
+visitar_celula::proc(l: ^Labirinto, coordenada: Coordenada) {
     if l == nil {return;}
 
-    if l.matriz[i][j] == ComponenteLabirinto.caminho {
-        l.matriz[i][j] = ComponenteLabirinto.caminho_visitado
+    if l.matriz[coordenada.i][coordenada.j] == ComponenteLabirinto.caminho {
+        l.matriz[coordenada.i][coordenada.j] = ComponenteLabirinto.caminho_visitado
     }
+}
+
+pegar_celula::proc(l: ^Labirinto, coordenada: Coordenada) -> ComponenteLabirinto {
+    return l.matriz[coordenada.i][coordenada.j]
+}
+
+em_cima::proc(coordenada: Coordenada) -> Coordenada {
+    return Coordenada{i = coordenada.i-1, j = coordenada.j}
+}
+
+em_baixo::proc(coordenada: Coordenada) -> Coordenada {
+    return Coordenada{i = coordenada.i+1, j = coordenada.j}
+}
+
+a_esquerda::proc(coordenada: Coordenada) -> Coordenada {
+    return Coordenada{i = coordenada.i, j = coordenada.j-1}
+}
+
+a_direita::proc(coordenada: Coordenada) -> Coordenada {
+    return Coordenada{i = coordenada.i, j = coordenada.j+1}
+}
+
+verifica_coordenada::proc(l: ^Labirinto, c: Coordenada) -> bool {
+    if c.i < 0 { return false }
+    if c.j < 0 {return false }
+    if c.i >= l.altura { return false }
+    if c.j >= l.largura {return false }
+
+    return true
+}
+
+create_coordenada::proc(i, j: int) -> Coordenada {
+    return Coordenada{i = i,j = j}
 }
 
 create_labirinto::proc(texto_labirinto: string) -> ^Labirinto {
