@@ -10,20 +10,17 @@ import solucao "nucleo:solucao"
  e em segundo lugar a solução encontrada pelo método no labirinto
  */
 bfs :: proc(grafo: ^gf.Grafo) -> [dynamic]^gf.No {
-
-
 	q: queue.Queue(^gf.No)
 	queue.init(&q)
+	defer queue.destroy(&q)
+
 	visited := make(map[^gf.No]bool)
+	defer delete(visited)
+
 	passos: [dynamic]^gf.No
 	actual_no := grafo.inicio
 
-	defer {queue.destroy(&q)
-		delete(visited)
-	}
-
 	for actual_no != grafo.fim {
-
 		append(&passos, actual_no)
 		visited[actual_no] = true
 		irmoes := listar_irmoes(actual_no)
