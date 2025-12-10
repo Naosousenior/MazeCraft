@@ -4,8 +4,8 @@ import "core:fmt"
 import "core:mem"
 import tools "ferramentas:montando_grafos"
 import gf "nucleo:grafo"
+import so "nucleo:solucao"
 import sl "nucleo:solucao/bfs"
-
 
 main :: proc() {
 	when ODIN_DEBUG {
@@ -26,13 +26,21 @@ main :: proc() {
 
 	grafo := tools.montar_grafo_simples()
 
-	solucao := sl.bfs(grafo)
+	solucao, passos := sl.bfs(grafo)
 
 	fmt.println("Segundo o emanuel, a solução para este labirinto é:")
 	for s in solucao {
 		fmt.println(s.valor)
 	}
-  
-  delete(solucao)
+
+
+	fmt.println(passos)
+
+	for passo := so.pop(passos); passo != nil; passo = so.pop(passos) {
+		fmt.println(passo)
+
+	}
+	so.destroy_pilha(&passos)
+	delete(solucao)
 	gf.destroy_grafo(&grafo)
 }
