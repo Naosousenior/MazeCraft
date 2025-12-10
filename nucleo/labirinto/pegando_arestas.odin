@@ -8,8 +8,12 @@ import gf "nucleo:grafo"
  * Você não limpe os caminhos visitados do labirinto depois de executar o procedimento anterior
  * Você inclua na lista de pontos, o ponto de início e de fim. Essa função não vai diferenciar essses nós dos demais
  */
-pegar_arestas::proc(l:^Labirinto, nos: []^gf.No, relacao_nos: map[int] Coordenada) {
+pegar_arestas::proc(l:^Labirinto, nos: [dynamic]^gf.No, relacao_nos: map[int] Coordenada) -> ([dynamic]^gf.Aresta,map[int] [dynamic] Coordenada){
+    lista_arestas := make([dynamic]^gf.Aresta)
+    relacao_arestas := make(map[int] [dynamic]Coordenada) //precisamos de uma relação da lista de coordenadas pra cada aresta
+
     //primeiro, vamos de nó em nó
+    contar_arestas := 0
     for no in nos {
         //para cada nó, vamos tentar pegar suas arestas. Para isso, vamos pegar sua coordenada no labirinto:
         coordenada := relacao_nos[no.valor]
@@ -20,31 +24,58 @@ pegar_arestas::proc(l:^Labirinto, nos: []^gf.No, relacao_nos: map[int] Coordenad
         //verificamos em cima
         if vizinho := em_cima(coordenada); verifica_coordenada(l,vizinho) {
             if  pegar_celula(l,vizinho) == ComponenteLabirinto.caminho {
-                montar_aresta(no,coordenada,vizinho,l,[dynamic]Coordenada{},nos,relacao_nos)
+                outro_no,caminho_coordenadas := montar_aresta(no,coordenada,vizinho,l,[dynamic]Coordenada{},nos,relacao_nos)
+
+                nova_aresta := gf.create_aresta(no,outro_no,contar_arestas)
+                contar_arestas += 1
+                append(&lista_arestas,nova_aresta)
+                relacao_arestas[nova_aresta.valor] = caminho_coordenadas
             }
         }
 
         //verificamos embaixo
         if vizinho := em_baixo(coordenada); verifica_coordenada(l,vizinho) {
             if  pegar_celula(l,vizinho) == ComponenteLabirinto.caminho {
-                montar_aresta(no,coordenada,vizinho,l,[dynamic]Coordenada{},nos,relacao_nos)
+                outro_no,caminho_coordenadas := montar_aresta(no,coordenada,vizinho,l,[dynamic]Coordenada{},nos,relacao_nos)
+
+                nova_aresta := gf.create_aresta(no,outro_no,contar_arestas)
+                contar_arestas += 1
+                append(&lista_arestas,nova_aresta)
+                relacao_arestas[nova_aresta.valor] = caminho_coordenadas
             }
         }
 
         //verificamos na esquerda
         if vizinho := a_esquerda(coordenada); verifica_coordenada(l,vizinho) {
             if  pegar_celula(l,vizinho) == ComponenteLabirinto.caminho {
-                montar_aresta(no,coordenada,vizinho,l,[dynamic]Coordenada{},nos,relacao_nos)
+                outro_no,caminho_coordenadas := montar_aresta(no,coordenada,vizinho,l,[dynamic]Coordenada{},nos,relacao_nos)
+
+                nova_aresta := gf.create_aresta(no,outro_no,contar_arestas)
+                contar_arestas += 1
+                append(&lista_arestas,nova_aresta)
+                relacao_arestas[nova_aresta.valor] = caminho_coordenadas
             }
         }
 
         //e também na direita
         if vizinho := a_direita(coordenada); verifica_coordenada(l,vizinho) {
             if  pegar_celula(l,vizinho) == ComponenteLabirinto.caminho {
-                montar_aresta(no,coordenada,vizinho,l,[dynamic]Coordenada{},nos,relacao_nos)
+                outro_no,caminho_coordenadas := montar_aresta(no,coordenada,vizinho,l,[dynamic]Coordenada{},nos,relacao_nos)
+
+                nova_aresta := gf.create_aresta(no,outro_no,contar_arestas)
+                contar_arestas += 1
+                append(&lista_arestas,nova_aresta)
+                relacao_arestas[nova_aresta.valor] = caminho_coordenadas
             }
         }
     }
+
+    for no in nos {
+        i, j := relacao_nos[no.valor].i, relacao_nos[no.valor].j
+        l.matriz[i][j] = ComponenteLabirinto.caminho
+    }
+
+    return lista_arestas,relacao_arestas
 }
 
 /*
@@ -60,9 +91,9 @@ montar_aresta::proc(
     anterior_coordenada, atual_coordenada: Coordenada,
     l: ^Labirinto,
     lista_coordenadas: [dynamic]Coordenada,
-    nos: []^gf.No,
+    nos: [dynamic]^gf.No,
     relacao_nos: map[int] Coordenada
-) -> (^gf.Aresta, []Coordenada) {
+) -> (^gf.No, [dynamic]Coordenada) {
     lista_coordenadas := lista_coordenadas //devido ao cu doce de odin, temos que sombrear essa variável
     //para montar uma aresta, temos que saber por qual caminho essa aresta continua
     coordenada_final : Coordenada
@@ -143,9 +174,7 @@ montar_aresta::proc(
         }
     }
 
-    nova_aresta := gf.create_aresta(no_inicial,no_final)
-
-    return lista_coordenadas,nova_aresta
+    return no_final,lista_coordenadas
 
 }
 

@@ -89,6 +89,21 @@ create_coordenada::proc(i, j: int) -> Coordenada {
     return Coordenada{i = i,j = j}
 }
 
+limpar_caminhos_visitados::proc(l: ^Labirinto) {
+    i, j := 0,0
+    for linha in l.matriz {
+        for celula in linha {
+            if celula == ComponenteLabirinto.caminho_visitado {
+                l.matriz[i][j] = ComponenteLabirinto.caminho
+            }
+            j += 1
+        }
+
+        j = 0
+        i += 1
+    }
+}
+
 create_labirinto::proc(texto_labirinto: string) -> ^Labirinto {
     i, j: int
     matriz := make([dynamic][dynamic] ComponenteLabirinto)
