@@ -10,7 +10,7 @@ import solucao "nucleo:solucao"
  lista de tentativas realizadas para solucionar o grafo do labirinto,
  e em segundo lugar a solução encontrada pelo método no labirinto
  */
-dfs :: proc(grafo: ^gf.Grafo) -> [dynamic]^gf.No {
+dfs :: proc(grafo: ^gf.Grafo) -> ([dynamic]^solucao.PilhaPassos, ^solucao.PilhaPassos) {
 	node_stack: stack.Queue(^gf.No)
 	stack.init(&node_stack)
 	defer stack.destroy(&node_stack)
@@ -23,26 +23,35 @@ dfs :: proc(grafo: ^gf.Grafo) -> [dynamic]^gf.No {
 	stack.push_back(&node_stack, grafo.inicio)
 	current_node := grafo.inicio
 
-	for current_node != grafo.fim {
-		current_node, ok := stack.pop_back_safe(&node_stack)
-		if current_node == nil do break
+	tentativas := make([dynamic]^solucao.PilhaPassos)
+	passos := solucao.create_passos()
 
+	for current_node != grafo.fim {
+		current_node, _ := stack.pop_back_safe(&node_stack)
+		if current_node == nil do break
+		was_visited, ok := visited[current_node]
+		if was_visited do continue
 
 		fmt.println("Nó atual: %v", current_node.valor)
 
 		map_insert(&visited, current_node, true)
 		append(&resulting_path, current_node)
 
-		for aresta in current_node.arestas {
-			_, already_visited, _, err := map_entry(&visited, aresta.no2)
+		has_children := false
+		#reverse for aresta in current_node.arestas {
+			has_children = true
+			stack.push_back(&node_stack, gf.no_na_outra_ponta(aresta, current_node))
+			solucao.push(passos, aresta)
+		}
 
-			if err == nil && !already_visited^ {
-				stack.push_back(&node_stack, aresta.no2)
-			}
+		if !has_children && current_node != grafo.fim {
+			clone, err := new_clone(passos^)
+			assert(err == .None)
+			append(&tentativas, clone)
+			solucao.pop(passos)
+			continue
 		}
 	}
 
-	append(&resulting_path, grafo.fim)
-
-	return resulting_path
+	return tentativas, passos
 }
