@@ -4,14 +4,14 @@ package main
 import "core:fmt"
 import "core:mem"
 import ferr "ferramentas:es"
-import lb "nucleo:labirinto"
 import gf "nucleo:grafo"
+import lb "nucleo:labirinto"
 import sl "nucleo:solucao"
+import a_star "nucleo:solucao/a_star"
 import bfs "nucleo:solucao/bfs"
-// import a_star "nucleo:solucao/a_star"
 
 main :: proc() {
-    when ODIN_DEBUG {
+	when ODIN_DEBUG {
 		track: mem.Tracking_Allocator
 		mem.tracking_allocator_init(&track, context.allocator)
 		context.allocator = mem.tracking_allocator(&track)
@@ -27,7 +27,7 @@ main :: proc() {
 		}
 	}
 
-	texto,ok := ferr.ler_arquivo("testes/labirinto_simples.txt")
+	texto, ok := ferr.ler_arquivo("testes/labirinto_simples.txt")
 	defer delete(texto)
 	if !ok {
 		fmt.println("da não fi, não achei o labirinto")
@@ -47,11 +47,11 @@ main :: proc() {
 	nos2 := make([dynamic]^gf.No)
 	defer delete(nos2)
 	for n in nos {
-		append(&nos2,n)
+		append(&nos2, n)
 	}
 
-	append(&nos2,no_inicio)
-	append(&nos2,no_fim)
+	append(&nos2, no_inicio)
+	append(&nos2, no_fim)
 
 	arestas, relacao_arestas := lb.pegar_arestas(labirinto,no_inicio,no_fim,nos2,relacao_nos)
 	defer delete(relacao_arestas)
