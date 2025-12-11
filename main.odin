@@ -34,13 +34,18 @@ main :: proc() {
 	}
 
 	labirinto := lb.create_labirinto(texto)
+	defer lb.destroy_labirinto(&labirinto)
+
 	lb.imprimir_labirinto(labirinto)	
 
 	nos,no_inicio,no_fim,relacao_nos := lb.pegar_pontos(labirinto)
+	defer delete(relacao_nos)
+
 	fmt.println("\nNós encontrados:")
 	lb.imprimir_labirinto(labirinto)
 
 	nos2 := make([dynamic]^gf.No)
+	defer delete(nos2)
 	for n in nos {
 		append(&nos2,n)
 	}
@@ -49,21 +54,22 @@ main :: proc() {
 	append(&nos2,no_fim)
 
 	arestas, relacao_arestas := lb.pegar_arestas(labirinto,no_inicio,no_fim,nos2,relacao_nos)
+	defer delete(relacao_arestas)
 	fmt.println("\nArestas encontrados:")
 	lb.imprimir_labirinto(labirinto)
 	lb.limpar_caminhos_visitados(labirinto)
 
 	grafo := gf.create_grafo(no_inicio,no_fim,nos,arestas)
+	defer gf.destroy_grafo(&grafo)
 
 	passos, solucao := bfs.bfs(grafo)
-
-
-	fmt.println("Solução encontrada:")
-	for aresta := sl.pop(solucao); aresta != nil; aresta = sl.pop(solucao) {
-		for coor in relacao_arestas[aresta.valor] {
-			lb.visitar_celula(labirinto,coor)
+	defer {
+		for &p in passos {
+			sl.destroy_pilha(&p)
 		}
+
+		sl.destroy_pilha(&solucao)
 	}
 
-	lb.imprimir_labirinto(labirinto)
+	sl.visualizar_solucao(labirinto,relacao_arestas,relacao_nos,passos,solucao)
 }
