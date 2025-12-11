@@ -1,10 +1,7 @@
 package a_estrela
 
-import "core:container/queue"
-import "core:sys/wasm/wasi"
 import gf "nucleo:grafo"
 import solucao "nucleo:solucao"
-import "nucleo:solucao/bfs"
 
 a_estrela :: proc(grafo: ^gf.Grafo) -> ^solucao.PilhaPassos {
 	q: [dynamic]^gf.Aresta

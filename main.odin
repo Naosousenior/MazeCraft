@@ -7,7 +7,8 @@ import ferr "ferramentas:es"
 import lb "nucleo:labirinto"
 import gf "nucleo:grafo"
 import sl "nucleo:solucao"
-import bfs "nucleo:solucao/bfs"
+// import bfs "nucleo:solucao/bfs"
+import a_s "nucleo:solucao/a_star"
 
 main :: proc() {
 	when ODIN_DEBUG {
@@ -52,7 +53,7 @@ main :: proc() {
 
 	grafo := gf.create_grafo(no_inicio,no_fim,nos,arestas)
 
-	passos,solucao := bfs.bfs(grafo)
+	solucao := a_s.a_estrela(grafo)
 
 
 	fmt.println("Solução encontrada:")
