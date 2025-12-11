@@ -11,38 +11,38 @@ import solucao "nucleo:solucao"
  e em segundo lugar a solução encontrada pelo método no labirinto
  */
 dfs :: proc(grafo: ^gf.Grafo) -> [dynamic]^gf.No {
-    node_stack: stack.Queue(^gf.No)
-    stack.init(&node_stack)
-    defer stack.destroy(&node_stack)
+	node_stack: stack.Queue(^gf.No)
+	stack.init(&node_stack)
+	defer stack.destroy(&node_stack)
 
-    visited := make(map[^gf.No]bool)
-    defer delete(visited)
+	visited := make(map[^gf.No]bool)
+	defer delete(visited)
 
-    resulting_path := make([dynamic]^gf.No)
+	resulting_path := make([dynamic]^gf.No)
 
-    stack.push_back(&node_stack, grafo.inicio)
-    current_node := grafo.inicio
+	stack.push_back(&node_stack, grafo.inicio)
+	current_node := grafo.inicio
 
-    for current_node != grafo.fim {
-        current_node, ok := stack.pop_back_safe(&node_stack)
-        if current_node == nil do break
+	for current_node != grafo.fim {
+		current_node, ok := stack.pop_back_safe(&node_stack)
+		if current_node == nil do break
 
 
-        fmt.println("Nó atual: %v", current_node.valor)
+		fmt.println("Nó atual: %v", current_node.valor)
 
-        map_insert(&visited, current_node, true)
-        append(&resulting_path, current_node)
+		map_insert(&visited, current_node, true)
+		append(&resulting_path, current_node)
 
-        for aresta in current_node.arestas {
-            _, already_visited, _, err:= map_entry(&visited, aresta.no2)
+		for aresta in current_node.arestas {
+			_, already_visited, _, err := map_entry(&visited, aresta.no2)
 
-            if err == nil && !already_visited^ {
-                stack.push_back(&node_stack, aresta.no2)
-            }
-        }
-    }
+			if err == nil && !already_visited^ {
+				stack.push_back(&node_stack, aresta.no2)
+			}
+		}
+	}
 
-    append(&resulting_path, grafo.fim)
+	append(&resulting_path, grafo.fim)
 
-    return resulting_path
+	return resulting_path
 }

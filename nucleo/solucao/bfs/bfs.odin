@@ -17,7 +17,7 @@ bfs :: proc(grafo: ^gf.Grafo) -> ^solucao.PilhaPassos {
 	defer queue.destroy(&q)
 
 	visited := make(map[^gf.No]bool)
-//	passos: [dynamic]^gf.No
+	//	passos: [dynamic]^gf.No
 	actual_no := grafo.inicio
 	pilha_passos := solucao.create_passos()
 
@@ -28,7 +28,7 @@ bfs :: proc(grafo: ^gf.Grafo) -> ^solucao.PilhaPassos {
 
 	for actual_no != grafo.fim {
 
-	//	append(&passos, actual_no)
+		//	append(&passos, actual_no)
 		visited[actual_no] = true
 		irmoes, arestas := listar_irmoes(actual_no)
 
@@ -37,25 +37,25 @@ bfs :: proc(grafo: ^gf.Grafo) -> ^solucao.PilhaPassos {
 		}
 
 		defer delete(irmoes)
-    defer delete(arestas)
+		defer delete(arestas)
 
 		enqueue_irmoes(&q, irmoes)
 
 		actual_no = queue.pop_front(&q)
- 
+
 		for visited[actual_no] {
 			actual_no = queue.pop_front(&q)
 		}
 	}
 
-//	append(&passos, actual_no)
+	//	append(&passos, actual_no)
 	return pilha_passos
 }
 
 listar_irmoes :: proc(no: ^gf.No) -> ([dynamic]^gf.No, [dynamic]^gf.Aresta) {
 
 	irmoes: [dynamic]^gf.No
-	arestas: [dynamic]^gf.Aresta 
+	arestas: [dynamic]^gf.Aresta
 
 	for aresta in no.arestas {
 		append(&arestas, aresta)

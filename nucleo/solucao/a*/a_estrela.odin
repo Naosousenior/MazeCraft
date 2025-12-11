@@ -4,55 +4,55 @@ import "core:container/queue"
 import "core:sys/wasm/wasi"
 import gf "nucleo:grafo"
 import solucao "nucleo:solucao"
-
-vizinho :: struct {
-	no:               ^gf.No,
-	aresta_de_origem: ^gf.Aresta,
-}
+import "nucleo:solucao/bfs"
 
 a_estrela :: proc(grafo: ^gf.Grafo) -> ^solucao.PilhaPassos {
+	q: [dynamic]^gf.Aresta
+	defer delete(q)
+
 	visited := make(map[^gf.No]bool)
 	defer delete(visited)
 
 	actual_no := grafo.inicio
-	pilha_de_passos := solucao.create_passos()
+	pilha_passos := solucao.create_passos()
+
+	proxima_aresta: ^gf.Aresta
 
 	for actual_no != grafo.fim {
-
 		visited[actual_no] = true
-		vizinhos := listar_vizinhos(actual_no)
-		aresta_passo: ^gf.Aresta
-		defer delete(vizinhos)
-		i := 999999999
-		for vizinho in vizinhos {
-			if vizinho.aresta_de_origem.peso_origem + vizinho.aresta_de_origem.peso_fim < i {
-				actual_no = vizinho.no
-				aresta_passo = vizinho.aresta_de_origem
 
+		adjacencias := listar_adjacências(actual_no)
+
+		for aresta in adjacencias {
+			append(&q, aresta)
+		}
+
+		i: f16
+		i = 1000
+
+		for aresta in q {
+			if i < aresta.peso {
+				if visited[gf.no_na_outra_ponta(aresta, actual_no)] {
+					continue
+				}
+				i = aresta.peso
+				proxima_aresta = aresta
 			}
 		}
 
-		solucao.push(pilha_de_passos, aresta_passo)
-
+		actual_no = gf.no_na_outra_ponta(proxima_aresta, actual_no)
+		solucao.push(pilha_passos, proxima_aresta)
 	}
 
-	return pilha_de_passos
-
+	return pilha_passos
 }
 
-listar_vizinhos :: proc(no: ^gf.No) -> [dynamic]^vizinho {
-	nos: ^gf.No
-	arestas: ^gf.No
-	vizinhoList: [dynamic]^vizinho
+listar_adjacências :: proc(no: ^gf.No) -> [dynamic]^gf.Aresta {
+	arestas: [dynamic]^gf.Aresta
+
 	for aresta in no.arestas {
-		vizinhoObj := vizinho {
-			no               = gf.no_na_outra_ponta(aresta, no),
-			aresta_de_origem = aresta,
-		}
-
-		append(&vizinhoList, &vizinhoObj)
-
+		append(&arestas, aresta)
 	}
 
-	return vizinhoList
+	return arestas
 }
