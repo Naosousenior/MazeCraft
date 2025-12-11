@@ -1,57 +1,67 @@
 package dfs
 
-import stack "core:container/queue"
-import "core:fmt"
 import gf "nucleo:grafo"
-import solucao "nucleo:solucao"
+import sl "nucleo:solucao"
 
+
+relacao_nos_visitados: map[int] u8
 /*
  Recebe como argumento um grafo e retorna, em primeiro lugar, a
  lista de tentativas realizadas para solucionar o grafo do labirinto,
  e em segundo lugar a solução encontrada pelo método no labirinto
  */
-dfs :: proc(grafo: ^gf.Grafo) -> ([dynamic]^solucao.PilhaPassos, ^solucao.PilhaPassos) {
-	node_stack: stack.Queue(^gf.No)
-	stack.init(&node_stack)
-	defer stack.destroy(&node_stack)
+dfs :: proc(grafo: ^gf.Grafo) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos) {
+	lista_passos := make([dynamic] ^sl.PilhaPassos)
+	passos_atuais := sl.create_passos()
+	
+	lista_solucoes, solucao, ok := percorre_grafo(grafo.fim.valor, grafo.inicio, lista_passos,passos_atuais)
 
-	visited := make(map[^gf.No]bool)
-	defer delete(visited)
+	return lista_solucoes, solucao
+}
 
-	resulting_path := make([dynamic]^gf.No)
+visitar_no::proc(no: ^gf.No) {
+	relacao_nos_visitados[no.valor] = 1
+}
 
-	stack.push_back(&node_stack, grafo.inicio)
-	current_node := grafo.inicio
+no_visitado::proc(no: ^gf.No) -> bool{
+	_, ok := relacao_nos_visitados[no.valor]
 
-	tentativas := make([dynamic]^solucao.PilhaPassos)
-	passos := solucao.create_passos()
+	return ok
+}
 
-	for current_node != grafo.fim {
-		current_node, _ := stack.pop_back_safe(&node_stack)
-		if current_node == nil do break
-		was_visited, ok := visited[current_node]
-		if was_visited do continue
+percorre_grafo::proc(fim: int,no: ^gf.No, passos: [dynamic] ^sl.PilhaPassos, passos_atuais: ^sl.PilhaPassos) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos, bool) {
+	visitar_no(no)
+	lista_passos := make([dynamic] ^sl.PilhaPassos)
+	for p in passos {
+		append(&lista_passos,p)
+	}
 
-		fmt.println("Nó atual: %v", current_node.valor)
+	//ele vai tentar ir pra cada uma das arestas
+	for aresta in no.arestas {
+		//depois, ele vai pegar o no da outra ponta da aresta
+		outro_no := gf.no_na_outra_ponta(aresta,no)
+		if outro_no.valor == fim {
+			sl.push(passos_atuais,aresta)
 
-		map_insert(&visited, current_node, true)
-		append(&resulting_path, current_node)
-
-		has_children := false
-		#reverse for aresta in current_node.arestas {
-			has_children = true
-			stack.push_back(&node_stack, gf.no_na_outra_ponta(aresta, current_node))
-			solucao.push(passos, aresta)
+			return lista_passos, passos_atuais, true
 		}
 
-		if !has_children && current_node != grafo.fim {
-			clone, err := new_clone(passos^)
-			assert(err == .None)
-			append(&tentativas, clone)
-			solucao.pop(passos)
+		if no_visitado(outro_no) {
 			continue
+		}
+
+		sl.push(passos_atuais,aresta)
+
+		append(&lista_passos,sl.clone(passos_atuais))
+		lista_s, solucao, ok := percorre_grafo(fim,outro_no,lista_passos,passos_atuais)
+
+		if ok {
+			return lista_s, solucao, true
 		}
 	}
 
-	return tentativas, passos
+	append(&lista_passos,sl.clone(passos_atuais))
+	sl.pop(passos_atuais)
+
+	return lista_passos,passos_atuais,false
 }

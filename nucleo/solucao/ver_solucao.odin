@@ -32,7 +32,7 @@ visualizar_solucao::proc(labirinto: ^lb.Labirinto, arestas_relacao: map[int] [dy
         }
 
         lb.imprimir_labirinto(labirinto)
-        time.sleep(time.Second*1)
+        time.sleep(time.Millisecond*200)
         lb.limpar_caminhos_visitados(labirinto)
     }
 

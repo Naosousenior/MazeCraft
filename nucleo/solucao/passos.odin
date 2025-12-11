@@ -37,6 +37,24 @@ pop :: proc(pilha: ^PilhaPassos) -> ^gf.Aresta {
 	return aresta
 }
 
+clone :: proc(pilha: ^PilhaPassos) -> ^PilhaPassos {
+	item_atual := pilha.atual
+	lista_arestas := make([dynamic] ^gf.Aresta)
+
+	for item_atual != nil {
+		append(&lista_arestas,item_atual.aresta)
+		item_atual = item_atual.proximo
+	}
+
+	nova_pilha := create_passos()
+
+	#reverse for aresta in lista_arestas {
+		push(nova_pilha,aresta)
+	}
+
+	return nova_pilha
+}
+
 //limpa a pilha
 clean :: proc(pilha: ^PilhaPassos) {
 	for {
