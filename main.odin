@@ -7,11 +7,11 @@ import ferr "ferramentas:es"
 import lb "nucleo:labirinto"
 import gf "nucleo:grafo"
 import sl "nucleo:solucao"
-// import bfs "nucleo:solucao/bfs"
-import a_s "nucleo:solucao/a_star"
+import bfs "nucleo:solucao/bfs"
+// import a_star "nucleo:solucao/a_star"
 
 main :: proc() {
-	when ODIN_DEBUG {
+    when ODIN_DEBUG {
 		track: mem.Tracking_Allocator
 		mem.tracking_allocator_init(&track, context.allocator)
 		context.allocator = mem.tracking_allocator(&track)
@@ -45,6 +45,8 @@ main :: proc() {
 		append(&nos2,n)
 	}
 
+	append(&nos2,no_inicio)
+	append(&nos2,no_fim)
 
 	arestas, relacao_arestas := lb.pegar_arestas(labirinto,no_inicio,no_fim,nos2,relacao_nos)
 	fmt.println("\nArestas encontrados:")
@@ -53,7 +55,7 @@ main :: proc() {
 
 	grafo := gf.create_grafo(no_inicio,no_fim,nos,arestas)
 
-	solucao := a_s.a_estrela(grafo)
+	passos, solucao := bfs.bfs(grafo)
 
 
 	fmt.println("Solução encontrada:")
