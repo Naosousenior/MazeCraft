@@ -40,6 +40,7 @@ pop :: proc(pilha: ^PilhaPassos) -> ^gf.Aresta {
 clone :: proc(pilha: ^PilhaPassos) -> ^PilhaPassos {
 	item_atual := pilha.atual
 	lista_arestas := make([dynamic] ^gf.Aresta)
+	defer delete(lista_arestas)
 
 	for item_atual != nil {
 		append(&lista_arestas,item_atual.aresta)

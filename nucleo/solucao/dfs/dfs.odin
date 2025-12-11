@@ -12,9 +12,15 @@ relacao_nos_visitados: map[int] u8
  */
 dfs :: proc(grafo: ^gf.Grafo) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos) {
 	lista_passos := make([dynamic] ^sl.PilhaPassos)
+	defer delete(lista_passos)
 	passos_atuais := sl.create_passos()
 	
 	lista_solucoes, solucao, ok := percorre_grafo(grafo.fim.valor, grafo.inicio, lista_passos,passos_atuais)
+	// delete(lista_passos)
+	// for &l in lista_passos {
+	// 	sl.destroy_pilha(&l)
+	// }
+	delete(relacao_nos_visitados)
 
 	return lista_solucoes, solucao
 }
@@ -29,12 +35,9 @@ no_visitado::proc(no: ^gf.No) -> bool{
 	return ok
 }
 
-percorre_grafo::proc(fim: int,no: ^gf.No, passos: [dynamic] ^sl.PilhaPassos, passos_atuais: ^sl.PilhaPassos) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos, bool) {
+percorre_grafo::proc(fim: int,no: ^gf.No, lista_passos: [dynamic] ^sl.PilhaPassos, passos_atuais: ^sl.PilhaPassos) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos, bool) {
 	visitar_no(no)
-	lista_passos := make([dynamic] ^sl.PilhaPassos)
-	for p in passos {
-		append(&lista_passos,p)
-	}
+	lista_passos := lista_passos
 
 	//ele vai tentar ir pra cada uma das arestas
 	for aresta in no.arestas {
@@ -54,8 +57,10 @@ percorre_grafo::proc(fim: int,no: ^gf.No, passos: [dynamic] ^sl.PilhaPassos, pas
 
 		append(&lista_passos,sl.clone(passos_atuais))
 		lista_s, solucao, ok := percorre_grafo(fim,outro_no,lista_passos,passos_atuais)
+		lista_passos = lista_s
 
 		if ok {
+			//delete(lista_passos)
 			return lista_s, solucao, true
 		}
 	}
