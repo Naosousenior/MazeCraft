@@ -41,7 +41,41 @@ main :: proc() {
 		fmt.println(passo)
 
 	}
-	so.destroy_pilha(&passos)
-	delete(solucao)
-	gf.destroy_grafo(&grafo)
+
+	append(&nos2,no_inicio)
+	append(&nos2,no_fim)
+
+	arestas, relacao_arestas := lb.pegar_arestas(labirinto,no_inicio,no_fim,nos2,relacao_nos)
+	fmt.println("\nArestas encontrados:")
+	lb.imprimir_labirinto(labirinto)
+
+	for a in arestas {
+		fmt.printfln("Aresta: %d, peso: %f, no1: %d, no2: %d", a.valor,a.peso, a.no1.valor, a.no2.valor)
+	}
+
+	
+	for &n in nos {
+		gf.destroy_no(&n)
+	}
+
+	for &a in arestas{
+		gf.destroy_aresta(&a)
+	}
+
+	for _,r in relacao_arestas {
+		delete(r)
+	}
+
+	delete(relacao_nos)
+	delete(relacao_arestas)
+	delete(nos)
+	delete(nos2)
+	delete(arestas)
+
+
+	gf.destroy_no(&no_inicio)
+	gf.destroy_no(&no_fim)
+	
+
+	lb.destroy_labirinto(&labirinto)
 }
