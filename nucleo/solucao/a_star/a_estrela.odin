@@ -29,12 +29,10 @@ a_estrela :: proc(grafo: ^gf.Grafo) -> ^solucao.PilhaPassos {
 		i = 1000
 
 		for aresta in q {
-			fmt.println("peso:", aresta.peso)
 			if i > aresta.peso {
 				if no_visitado(aresta.no2, visited) && no_visitado(aresta.no1, visited) {
 					continue
 				}
-				fmt.println("pesso da vez:", aresta.peso)
 				i = aresta.peso
 				proxima_aresta = aresta
 			}
