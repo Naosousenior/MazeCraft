@@ -12,10 +12,6 @@
         {
             "name": "nucleo",
             "path": "nucleo/"
-        },
-        {
-            "name": "interface",
-            "path": "interface/"
         }
     ]
 }

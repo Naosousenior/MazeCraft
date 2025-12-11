@@ -46,9 +46,13 @@ main::proc() {
 	append(&nos2,no_inicio)
 	append(&nos2,no_fim)
 
-	arestas, relacao_arestas := lb.pegar_arestas(labirinto,nos2,relacao_nos)
+	arestas, relacao_arestas := lb.pegar_arestas(labirinto,no_inicio,no_fim,nos2,relacao_nos)
 	fmt.println("\nArestas encontrados:")
 	lb.imprimir_labirinto(labirinto)
+
+	for a in arestas {
+		fmt.printfln("Aresta: %d, peso: %f, no1: %d, no2: %d", a.valor,a.peso, a.no1.valor, a.no2.valor)
+	}
 
 	
 	for &n in nos {

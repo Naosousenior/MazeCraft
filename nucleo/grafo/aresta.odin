@@ -5,14 +5,16 @@ package grafo
  A aresta pode ser identificada pelo seu campo valor
  */
 Aresta :: struct {
-    valor:int,
+    valor :int,
+    peso: f16,
     no1,no2: ^No
 }
 
-create_aresta::proc(no1,no2:^No,valor:int) -> ^Aresta {
+create_aresta::proc(no1,no2:^No, peso: f16, valor:int) -> ^Aresta {
     nova_aresta := new(Aresta)
     nova_aresta.no1 = no1
     nova_aresta.no2 = no2
+    nova_aresta.peso = peso
     nova_aresta.valor = valor
 
     append(&no1.arestas,nova_aresta) //como eu criei uma nova aresta, devo adicionar elas aos nos obviamente

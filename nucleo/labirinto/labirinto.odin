@@ -1,5 +1,6 @@
 package labirinto
 import "core:fmt"
+import "core:math"
 import "nucleo:labirinto"
 
 ComponenteLabirinto :: enum {
@@ -58,6 +59,13 @@ visitar_celula::proc(l: ^Labirinto, coordenada: Coordenada) {
 
 pegar_celula::proc(l: ^Labirinto, coordenada: Coordenada) -> ComponenteLabirinto {
     return l.matriz[coordenada.i][coordenada.j]
+}
+
+distancia_coordendas::proc(c1: Coordenada, c2: Coordenada) -> f16 {
+    x := f16(c1.i-c2.i)
+    y := f16(c1.j - c2.j)
+
+    return math.sqrt((x*x)+(y*y))
 }
 
 em_cima::proc(coordenada: Coordenada) -> Coordenada {
