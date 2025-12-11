@@ -3,10 +3,11 @@ package main
 
 import "core:fmt"
 import "core:mem"
-import tools "ferramentas:montando_grafos"
+import ferr "ferramentas:es"
+import lb "nucleo:labirinto"
 import gf "nucleo:grafo"
-import so "nucleo:solucao"
-import sl "nucleo:solucao/bfs"
+import sl "nucleo:solucao"
+import bfs "nucleo:solucao/bfs"
 
 main :: proc() {
     when ODIN_DEBUG {
@@ -25,21 +26,22 @@ main :: proc() {
 		}
 	}
 
-	grafo := tools.montar_grafo_simples()
-
-	solucao, passos := sl.bfs(grafo)
-
-	fmt.println("Segundo o emanuel, a solução para este labirinto é:")
-	for s in solucao {
-		fmt.println(s.valor)
+	texto,ok := ferr.ler_arquivo("testes/labirinto_simples.txt")
+	defer delete(texto)
+	if !ok {
+		fmt.println("da não fi, não achei o labirinto")
 	}
 
+	labirinto := lb.create_labirinto(texto)
+	lb.imprimir_labirinto(labirinto)	
 
-	fmt.println(passos)
+	nos,no_inicio,no_fim,relacao_nos := lb.pegar_pontos(labirinto)
+	fmt.println("\nNós encontrados:")
+	lb.imprimir_labirinto(labirinto)
 
-	for passo := so.pop(passos); passo != nil; passo = so.pop(passos) {
-		fmt.println(passo)
-
+	nos2 := make([dynamic]^gf.No)
+	for n in nos {
+		append(&nos2,n)
 	}
 
 	append(&nos2,no_inicio)
@@ -48,34 +50,19 @@ main :: proc() {
 	arestas, relacao_arestas := lb.pegar_arestas(labirinto,no_inicio,no_fim,nos2,relacao_nos)
 	fmt.println("\nArestas encontrados:")
 	lb.imprimir_labirinto(labirinto)
+	lb.limpar_caminhos_visitados(labirinto)
 
-	for a in arestas {
-		fmt.printfln("Aresta: %d, peso: %f, no1: %d, no2: %d", a.valor,a.peso, a.no1.valor, a.no2.valor)
+	grafo := gf.create_grafo(no_inicio,no_fim,nos,arestas)
+
+	passos,solucao := bfs.bfs(grafo)
+
+
+	fmt.println("Solução encontrada:")
+	for aresta := sl.pop(solucao); aresta != nil; aresta = sl.pop(solucao) {
+		for coor in relacao_arestas[aresta.valor] {
+			lb.visitar_celula(labirinto,coor)
+		}
 	}
 
-	
-	for &n in nos {
-		gf.destroy_no(&n)
-	}
-
-	for &a in arestas{
-		gf.destroy_aresta(&a)
-	}
-
-	for _,r in relacao_arestas {
-		delete(r)
-	}
-
-	delete(relacao_nos)
-	delete(relacao_arestas)
-	delete(nos)
-	delete(nos2)
-	delete(arestas)
-
-
-	gf.destroy_no(&no_inicio)
-	gf.destroy_no(&no_fim)
-	
-
-	lb.destroy_labirinto(&labirinto)
+	lb.imprimir_labirinto(labirinto)
 }
