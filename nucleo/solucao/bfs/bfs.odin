@@ -56,6 +56,14 @@ bfs::proc(grafo: ^gf.Grafo) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos) {
 						sl.push(solucao,a)
 					}
 
+					//limpando a memoria
+					destroy_pilha_nos(&nova_geracao)
+					destroy_pilha_nos(&geracao_atual)
+					for _,value in passos_para_ponto {
+						delete(value)
+					}
+					delete(passos_para_ponto)
+
 					return lista_passos,solucao
 					
 				}
