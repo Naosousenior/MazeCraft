@@ -246,6 +246,7 @@ montar_aresta::proc(
     //se chegou até aqui, significa que chegamos ao final da aresta, então, significa que a coordenada já foi definida, e podemos usar ele para encontrar
     //então, podemos adicionar ela a lista de coordenadas, e pegamos o seu nó correspondente
 
+    append(&lista_coordenadas,atual_coordenada)
     no_final := no_da_coordenada(nos,relacao_nos,coordenada_final)
 
     return no_final,lista_coordenadas
