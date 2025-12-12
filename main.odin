@@ -1,5 +1,7 @@
 package main
 
+import "core:os"
+import "core:strings"
 
 import "core:fmt"
 import "core:mem"
@@ -28,59 +30,136 @@ main :: proc() {
 		}
 	}
 
-	texto, ok := ferr.ler_arquivo("testes/labirinto_complexo.txt")
-	defer delete(texto)
+	input := ""
+
+	fmt.println("Coloque o labiritino que você deseja no arquivo labirinto.txt")
+	print_regras()
+
+	fmt.println()
+	fmt.println("Quando tiver preenchido o labirinto, por favor, aperte enter")
+	delete(ler_teclado())
+
+	texto_labirinto, ok := ferr.ler_arquivo("./labirinto.txt")
+	defer delete(texto_labirinto)
 	if !ok {
-		fmt.println("da não fi, não achei o labirinto")
+		fmt.println("Arquivo do labirinto não encontrado, encerrando o programa")
+		return
 	}
 
-	labirinto := lb.create_labirinto(texto)
+	labirinto := lb.create_labirinto(texto_labirinto)
 	defer lb.destroy_labirinto(&labirinto)
 
-	lb.imprimir_labirinto(labirinto)	
+	fmt.println("Labirinto carregado:")
+	lb.imprimir_labirinto(labirinto)
+	fmt.println()
+	esperar()
 
-	nos,no_inicio,no_fim,relacao_nos := lb.pegar_pontos(labirinto)
-	defer delete(relacao_nos)
+	nos, no_inicio, no_fim, nos_relacao := lb.pegar_pontos(labirinto)
+	defer delete(nos_relacao)
 
-	fmt.println("\nNós encontrados:")
+	clear_terminal()
+	fmt.println("Nós encontrados no labirinto:")
 	lb.imprimir_labirinto(labirinto)
 
-	nos2 := make([dynamic]^gf.No)
+	esperar()
+
+	clear_terminal()
+
+	nos2:= make([dynamic]^gf.No)
 	defer delete(nos2)
+
 	for n in nos {
-		append(&nos2, n)
+		append(&nos2,n)
 	}
 
-	append(&nos2, no_inicio)
-	append(&nos2, no_fim)
+	append(&nos2,no_inicio)
+	append(&nos2,no_fim)
 
-	arestas, relacao_arestas := lb.pegar_arestas(labirinto,no_inicio,no_fim,nos2,relacao_nos)
+
+	fmt.println("Arestas encontradas:")
+	arestas, arestas_relacao := lb.pegar_arestas(labirinto,no_inicio,no_fim,nos2,nos_relacao)
 	defer {
-		for _, value in relacao_arestas {
-			delete(value)
+		for _,n in arestas_relacao {
+			delete(n)
 		}
-		delete(relacao_arestas)
+		delete(arestas_relacao)
 	}
-	fmt.println("\nArestas encontrados:")
+
 	lb.imprimir_labirinto(labirinto)
+	esperar()
+
 	lb.limpar_caminhos_visitados(labirinto)
 
 	grafo := gf.create_grafo(no_inicio,no_fim,nos,arestas)
 	defer gf.destroy_grafo(&grafo)
 
-	passos, solucao := a_star.a_star(grafo)
+	fmt.println("Qual método de solução você deseja fazer?")
+	print_opcoes()
+	resposta := ler_teclado()
+	defer delete(resposta)
 
-	//fmt.println(len(passos))
+	solucao : ^sl.PilhaPassos
+	tentativas: [dynamic]^sl.PilhaPassos
 
-	//passos := make([dynamic]^sl.PilhaPassos)
 	defer {
-		for &p in passos {
-			sl.destroy_pilha(&p)
+		for &t in tentativas {
+			sl.destroy_pilha(&t)
 		}
-		delete(passos)
+		delete(tentativas)
 
 		sl.destroy_pilha(&solucao)
 	}
 
-	sl.visualizar_solucao(labirinto,relacao_arestas,relacao_nos,passos,solucao)
+	switch resposta[0] {
+		case '1':
+			tentativas, solucao = bfs.bfs(grafo)
+		case '2':
+			tentativas, solucao = dfs.dfs(grafo)
+		case '3':
+			tentativas,solucao = a_star.a_star(grafo)
+		case:
+			fmt.println("Nenhuma opção válida foi dada")
+			return
+	}
+
+	sl.visualizar_solucao(labirinto,arestas_relacao,nos_relacao,tentativas,solucao)
+	esperar()
+}
+
+print_regras::proc() {
+	fmt.println("Regras para o labirinto:")
+	fmt.println("1. Somento 4 caracteres são permitidos: +, #, s, e")
+	fmt.println("2. Tente fazer um labirinto solucionável, ou pegue um dos exemplos dados")
+	fmt.println("3. O caractere s (start) indica o início do labirinto, e o caractere e (end) o final")
+	fmt.println("4. O caractere + indica um caminho")
+	fmt.println("4. O caractere # indica uma parede")
+}
+
+print_opcoes::proc() {
+	fmt.println("1: BFS")
+	fmt.println("2: DFS")
+	fmt.println("3: A*")
+}
+
+clear_terminal :: proc() {
+    fmt.println("\x1b[2J")
+}
+
+esperar::proc() {
+	fmt.println("Digite enter para continuar> ")
+	delete(ler_teclado())
+}
+
+ler_teclado::proc() -> string {
+	input := [2]u8{}
+
+	for {
+		os.read(os.stdin,input[:])
+
+		if input[0] != 0 {
+			break
+		}
+	}
+
+	return strings.clone_from_bytes(input[:])
 }
