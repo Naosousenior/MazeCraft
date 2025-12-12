@@ -1,83 +1,96 @@
-package a_estrela
+package a_star
 
-import "core:fmt"
 import gf "nucleo:grafo"
-import solucao "nucleo:solucao"
+import sl "nucleo:solucao"
 
-a_estrela :: proc(grafo: ^gf.Grafo) -> ^solucao.PilhaPassos {
-	q: [dynamic]^gf.Aresta
-	defer delete(q)
 
-	visited := make(map[int]bool)
-	defer delete(visited)
+relacao_nos_visitados: map[int] u8
+/*
+ Recebe como argumento um grafo e retorna, em primeiro lugar, a
+ lista de tentativas realizadas para solucionar o grafo do labirinto,
+ e em segundo lugar a solução encontrada pelo método no labirinto
+ */
+a_star :: proc(grafo: ^gf.Grafo) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos) {
+	relacao_nos_visitados = make(map[int] u8)
+	todas_tentativas := make([dynamic]^sl.PilhaPassos)
+	passos_ate_no := make(map[int] [dynamic]^gf.Aresta)
+	fila := create_fila_aresta()
+	pilha_passos := sl.create_passos()
+	no_atual := grafo.inicio
+	passos_ate_no[grafo.inicio.valor] = [dynamic]^gf.Aresta{}
 
-	actual_no := grafo.inicio
-	pilha_passos := solucao.create_passos()
+	for no_atual.valor != grafo.fim.valor {
+		//primeiro, vamos marcar o no atual como visitado
+		visitar_no(no_atual)
 
-	proxima_aresta: ^gf.Aresta
+		//depois, vamos pegar o caminho ate ele
+		caminho_ate_aqui := passos_ate_no[no_atual.valor]
 
-	for actual_no != grafo.fim {
-		visited[actual_no.valor] = true
+		for aresta in no_atual.arestas {
+			//agora, vamos basicamente colocar cada uma das arestas do no na fila de prioridade
 
-		adjacencias := listar_adjacências(actual_no)
+			//primeiro, pegamos o no da outra ponta dessa aresta
+			outra_ponta := gf.no_na_outra_ponta(aresta,no_atual)
 
-		for aresta in adjacencias {
-			append(&q, aresta)
-		}
+			//e atribuimos o caminho dela
+			novo_caminho := make([dynamic]^gf.Aresta)
 
-		i: f16
-		i = 1000
-
-		for aresta in q {
-			if i > aresta.peso {
-				if no_visitado(aresta.no2, visited) && no_visitado(aresta.no1, visited) {
-					continue
-				}
-				i = aresta.peso
-				proxima_aresta = aresta
+			for a in caminho_ate_aqui {
+				append(&novo_caminho,a)
 			}
 
+			//adicionamo a aresta ao caminho
+			append(&novo_caminho,aresta)
+			//e o novo caminho ao ponto
+			passos_ate_no[outra_ponta.valor] = novo_caminho
+
+			//enviamos por fim, a aresta para a fila
+			push(fila,aresta)
 		}
 
-		if no_visitado(proxima_aresta.no2, visited) {
-			if no_visitado(proxima_aresta.no1, visited) {
-				continue
-			} else {
-				actual_no = proxima_aresta.no1
+		//tentamos entao pegar a proxima aresta da fila
+		proxima_aresta := pop(fila)
+		for {
+			//se for nulo, acabamos aqui, ou há um erro ou o algortimo nao roda
+			if proxima_aresta == nil {
+				return nil,nil
 			}
-		} else {
-			actual_no = proxima_aresta.no2
+
+			//verificamos cada uma das pontas dessa aresta, para saber se não já visitamos as duas pontas
+			if !no_visitado(proxima_aresta.no1) {
+				no_atual = proxima_aresta.no1
+				break
+			}
+
+			if !no_visitado(proxima_aresta.no2) {
+				no_atual = proxima_aresta.no2
+				break
+			}
+
+			//se todas as pontas da aresta foram visitadas, vamos para a proxima
+			proxima_aresta = pop(fila)
 		}
-		//actual_no = gf.no_na_outra_ponta(proxima_aresta, actual_no)
-		//
-		// if visited[proxima_aresta.no1] {
-		// 	if visited[proxima_aresta.no2] {
-		// 		continue
-		// 	} else {
-		// 		actual_no = proxima_aresta.no2
-		// 	}
-		// } else {
-		// 	actual_no = proxima_aresta.no1
-		// }
 
-		solucao.push(pilha_passos, proxima_aresta)
+		sl.push(pilha_passos,proxima_aresta)
+		append(&todas_tentativas,sl.clone(pilha_passos))
 	}
 
-	return pilha_passos
-}
+	lista_solucao := passos_ate_no[no_atual.valor]
+	sl.clean(pilha_passos)
 
-listar_adjacências :: proc(no: ^gf.No) -> [dynamic]^gf.Aresta {
-	arestas: [dynamic]^gf.Aresta
-
-	for aresta in no.arestas {
-		append(&arestas, aresta)
+	#reverse for l in lista_solucao {
+		sl.push(pilha_passos,l)
 	}
 
-	return arestas
+	return todas_tentativas,pilha_passos
 }
 
-no_visitado :: proc(no: ^gf.No, mapa: map[int]bool) -> bool {
-	_, ok := mapa[no.valor]
+visitar_no::proc(no: ^gf.No) {
+	relacao_nos_visitados[no.valor] = 1
+}
+
+no_visitado::proc(no: ^gf.No) -> bool {
+	_,ok := relacao_nos_visitados[no.valor]
 
 	return ok
 }
