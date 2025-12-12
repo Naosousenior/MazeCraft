@@ -48,6 +48,7 @@ push::proc(f: ^FilaArestas,aresta: ^gf.Aresta) {
 
 pop::proc(f: ^FilaArestas) -> ^gf.Aresta {
     if f == nil {return nil}
+    if f.primeiro == nil {return nil}
 
     primeiro := f.primeiro
     aresta := primeiro.aresta
@@ -80,4 +81,15 @@ create_fila_aresta::proc() -> ^FilaArestas {
     nova_fila.primeiro = nil
 
     return nova_fila
+}
+
+destroy_fila_aresta::proc(f: ^^FilaArestas) {
+    if f == nil {return}
+    if f^ == nil {return}
+
+    for p := pop(f^); p != nil; p = pop(f^) {}
+
+    free(f^)
+
+    f^ = nil
 }

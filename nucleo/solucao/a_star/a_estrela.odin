@@ -12,9 +12,20 @@ relacao_nos_visitados: map[int] u8
  */
 a_star :: proc(grafo: ^gf.Grafo) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos) {
 	relacao_nos_visitados = make(map[int] u8)
+	defer delete(relacao_nos_visitados)
+
 	todas_tentativas := make([dynamic]^sl.PilhaPassos)
 	passos_ate_no := make(map[int] [dynamic]^gf.Aresta)
+	defer {
+		for _, value in passos_ate_no {
+			delete(value)
+		}
+		delete(passos_ate_no)
+	}
+
 	fila := create_fila_aresta()
+	defer destroy_fila_aresta(&fila)
+
 	pilha_passos := sl.create_passos()
 	no_atual := grafo.inicio
 	passos_ate_no[grafo.inicio.valor] = [dynamic]^gf.Aresta{}
@@ -41,7 +52,21 @@ a_star :: proc(grafo: ^gf.Grafo) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos) 
 
 			//adicionamo a aresta ao caminho
 			append(&novo_caminho,aresta)
-			//e o novo caminho ao ponto
+
+			// //verifico se ja ha um caminho ate aquele no
+			// if caminho_existente, ok := passos_ate_no[outra_ponta.valor]; ok {
+			// 	//se sim, verifico se o novo caminho tem mais ou menos peso
+			// 	if peso_caminho(novo_caminho) < peso_caminho(caminho_existente) {
+			// 		delete(caminho_existente)
+			// 		//se for mais leve, defino o no como o novo caminho
+			// 		passos_ate_no[outra_ponta.valor] = novo_caminho
+			// 	} else {
+			// 		delete(novo_caminho)
+			// 	}
+			// } else {
+			// 	passos_ate_no[outra_ponta.valor] = novo_caminho
+			// }
+
 			passos_ate_no[outra_ponta.valor] = novo_caminho
 
 			//enviamos por fim, a aresta para a fila
@@ -93,4 +118,13 @@ no_visitado::proc(no: ^gf.No) -> bool {
 	_,ok := relacao_nos_visitados[no.valor]
 
 	return ok
+}
+
+peso_caminho::proc(caminho: [dynamic]^gf.Aresta) -> f16 {
+	resultado :f16 = 0
+	for n in caminho {
+		resultado += n.peso
+	}
+
+	return resultado
 }
