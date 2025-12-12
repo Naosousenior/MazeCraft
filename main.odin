@@ -93,6 +93,39 @@ main :: proc() {
 	grafo := gf.create_grafo(no_inicio,no_fim,nos,arestas)
 	defer gf.destroy_grafo(&grafo)
 
+	// matriz_adjacencia := gf.criar_matriz_adjacencia(grafo)
+	// matriz_incidencia := gf.criar_matriz_incidencia(grafo)
+	// defer {
+	// 	for a in matriz_adjacencia {
+	// 		delete(a)
+	// 	}
+
+	// 	for a in matriz_incidencia {
+	// 		delete(a)
+	// 	}
+
+	// 	delete(matriz_adjacencia)
+	// 	delete(matriz_incidencia)
+	// }
+
+	// fmt.println("Matriz de adjacencia:")
+	// for linha in matriz_adjacencia {
+	// 	fmt.print("| ")
+	// 	for i in linha {
+	// 		fmt.printf("%d ",i)
+	// 	}
+	// 	fmt.println("|")
+	// }
+
+	// fmt.println("\nMatriz de incidencia:")
+	// for linha in matriz_incidencia {
+	// 	fmt.print("| ")
+	// 	for i in linha {
+	// 		fmt.printf("%d ",i)
+	// 	}
+	// 	fmt.println("|")
+	// }
+
 	fmt.println("Qual método de solução você deseja fazer?")
 	print_opcoes()
 	resposta := ler_teclado()

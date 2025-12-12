@@ -30,7 +30,15 @@ pegar_arestas::proc(l:^Labirinto, no_inicio,no_fim: ^gf.No, nos: [dynamic]^gf.No
                 coor1:= caminho_coordenadas[0]
                 coor2:= caminho_coordenadas[len(caminho_coordenadas)-1]
 
-                peso := (distancia_coordendas(coor1,coordenada_inicio) + distancia_coordendas(coor2,coordenada_fim))
+                peso: f16
+                peso1 := (distancia_coordendas(coor1,coordenada_inicio) + distancia_coordendas(coor2,coordenada_fim))
+                peso2 := (distancia_coordendas(coor2,coordenada_inicio) + distancia_coordendas(coor1,coordenada_fim))
+
+                if peso1 < peso2 {
+                    peso = peso1
+                } else {
+                    peso = peso2
+                }
 
                 nova_aresta := gf.create_aresta(no,outro_no,peso,contar_arestas)
                 contar_arestas += 1
@@ -42,7 +50,16 @@ pegar_arestas::proc(l:^Labirinto, no_inicio,no_fim: ^gf.No, nos: [dynamic]^gf.No
             {
                 outro_no := no_da_coordenada(nos,relacao_nos,vizinho)
                 if outro_no != nil {
-                    peso := (distancia_coordendas(coordenada,coordenada_inicio) + distancia_coordendas(vizinho,coordenada_fim))
+
+                    peso: f16
+                    peso1 := (distancia_coordendas(coordenada,coordenada_inicio) + distancia_coordendas(vizinho,coordenada_fim))
+                    peso2 := (distancia_coordendas(vizinho,coordenada_inicio) + distancia_coordendas(coordenada,coordenada_fim))
+
+                    if peso1 < peso2 {
+                        peso = peso1
+                    } else {
+                        peso = peso2
+                    }
 
                     nova_aresta := gf.create_aresta(no,outro_no,peso,contar_arestas)
                     contar_arestas += 1
