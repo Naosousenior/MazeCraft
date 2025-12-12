@@ -53,21 +53,21 @@ a_star :: proc(grafo: ^gf.Grafo) -> ([dynamic]^sl.PilhaPassos, ^sl.PilhaPassos) 
 			//adicionamo a aresta ao caminho
 			append(&novo_caminho,aresta)
 
-			// //verifico se ja ha um caminho ate aquele no
-			// if caminho_existente, ok := passos_ate_no[outra_ponta.valor]; ok {
-			// 	//se sim, verifico se o novo caminho tem mais ou menos peso
-			// 	if peso_caminho(novo_caminho) < peso_caminho(caminho_existente) {
-			// 		delete(caminho_existente)
-			// 		//se for mais leve, defino o no como o novo caminho
-			// 		passos_ate_no[outra_ponta.valor] = novo_caminho
-			// 	} else {
-			// 		delete(novo_caminho)
-			// 	}
-			// } else {
-			// 	passos_ate_no[outra_ponta.valor] = novo_caminho
-			// }
+			//verifico se ja ha um caminho ate aquele no
+			if caminho_existente, ok := passos_ate_no[outra_ponta.valor]; ok {
+				//se sim, verifico se o novo caminho tem mais ou menos peso
+				if peso_caminho(novo_caminho) < peso_caminho(caminho_existente) {
+					delete(caminho_existente)
+					//se for mais leve, defino o no como o novo caminho
+					passos_ate_no[outra_ponta.valor] = novo_caminho
+				} else {
+					delete(novo_caminho)
+				}
+			} else {
+				passos_ate_no[outra_ponta.valor] = novo_caminho
+			}
 
-			passos_ate_no[outra_ponta.valor] = novo_caminho
+			// passos_ate_no[outra_ponta.valor] = novo_caminho
 
 			//enviamos por fim, a aresta para a fila
 			push(fila,aresta)
